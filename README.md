@@ -28,7 +28,7 @@ Threshold decryption on multiple ciphertexts without packing,
 ```
 ./test/PublicMKTFHELBit-spqlios-fma
 ```
-For CNN inference run trainCNN.py file in src/test. We use PyTorch libarary of Python to train our CNN model. Install PyTorch from: https://pytorch.org/
+For our CNN model training run trainCNN.py file in src/test. We use PyTorch libarary of Python to train our CNN model. Install PyTorch from: https://pytorch.org/
 ```
 pip3 install torch torchvision torchaudio
 ```
