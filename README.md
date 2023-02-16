@@ -17,7 +17,7 @@ make
 To test (from build):
 ```
 
-#### Threshold decryption on single bit messages,
+### Threshold decryption on single bit messages,
 ./test/PublicMKTFHE-spqlios-fma
 
 #### Threshold decryption on packed ciphertext,
