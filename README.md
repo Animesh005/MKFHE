@@ -28,6 +28,11 @@ Threshold decryption on multiple ciphertexts without packing,
 ```
 ./test/PublicMKTFHELBit-spqlios-fma
 ```
+For CNN inference run trainCNN.py file in src/test. We use PyTorch libarary of Python to train our CNN model. Install PyTorch from: https://pytorch.org/
+```
+pip3 install torch torchvision torchaudio
+```
+trainCNN.py contains the training of our CNN model and saving the trained parameters in src/test/model_params directory. The MNIST dataset is stored in src/test/mnist_data. Move both the data in src/test/mnist_data and model parameters in src/test/model_params to build/test/mnist_data and build/test/model_params directory respectively.
 
 CNN inference in clear,
 ```
