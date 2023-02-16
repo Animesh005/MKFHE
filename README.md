@@ -8,10 +8,15 @@ After cloning the repository, do the following:
 cd MK-TFHE 
 git submodule init
 git submodule update 
+cd OpenBLAS
+make
+sudo make PREFIX=/usr/local install
+cd ..
 mkdir build
 cd build
 cmake ../src -DENABLE_TESTS=on -DENABLE_FFTW=off -DENABLE_NAYUKI_PORTABLE=off -DENABLE_NAYUKI_AVX=off -DCMAKE_BUILD_TYPE=release -DCMAKE_CXX_FLAGS=-fopenmp
 make
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 ```
 
 To test (from build):
