@@ -28,7 +28,7 @@
 #include <string.h>
 
 using namespace std;
-#define WIDTH 9
+#define WIDTH 10 // number of bits representing integer
 
 const int INPUT_WIDTH = 28;
 const int INPUT_HEIGHT = 28;
@@ -491,16 +491,19 @@ vector<vector<vector<MKLweSample*>>> enc_conv2d(vector<vector<MKLweSample*>>& in
                         const TLweParams* RLWEparams, const MKTFHEParams *MKparams, const MKRLweKey *MKrlwekey, 
                         Torus32* crs, vector<Torus32> publicKey, int id) {
 
-    int input_width = input.size();
-    int input_height = input[0].size();
+    int input_height = input.size();
+    int input_width = input[0].size();
     int output_height = (input_height - FILTER_SIZE) / STRIDE + 1;
     int output_width = (input_width - FILTER_SIZE) / STRIDE + 1;
 
-    vector<vector<vector<MKLweSample*>>> outputs(NUM_FILTERS, vector<vector<MKLweSample*>>(output_width, vector<MKLweSample*>(output_height)));
+    auto zero = new_MKLweSample_array(WIDTH, LWEparams, MKparams);
+    IntAsymEncrypt(zero, 0, crs, publicKey[id]);
+    genExtCipherArr(zero, zero, id, publicKey);
+
+    vector<vector<vector<MKLweSample*>>> outputs(NUM_FILTERS, vector<vector<MKLweSample*>>(output_height, vector<MKLweSample*>(output_width, zero)));
 
     for (int c = 0; c < NUM_FILTERS; c++)
     {   
-        cout << "c: " << c << endl;
         for (int i = 0; i < output_height; i++) {
             for (int j = 0; j < output_width; j++) {
                 auto sum = new_MKLweSample_array(WIDTH, LWEparams, MKparams);
@@ -508,7 +511,6 @@ vector<vector<vector<MKLweSample*>>> enc_conv2d(vector<vector<MKLweSample*>>& in
                     for (int n = 0; n < FILTER_SIZE; n++) {
                         int x = i * STRIDE + m;
                         int y = j * STRIDE + n;
-                        cout << "x: " << x << ", y: " << y << endl;
                         // sum += input[x][y] * kernels[c][m][n];
                         auto mulTmp = new_MKLweSample_array(WIDTH, LWEparams, MKparams);
                         CktMul(bkFFT, LWEparams, extractedLWEparams, RLWEparams, MKparams, MKrlwekey, mulTmp, input[x][y], kernels[c][m][n]);
@@ -537,15 +539,19 @@ vector<vector<vector<MKLweSample*>>> enc_max_pooling2d(vector<vector<vector<MKLw
     int output_height = input_height / WINDOW_SIZE;
     int output_width = input_width / WINDOW_SIZE;
 
+    auto zero = new_MKLweSample_array(WIDTH, LWEparams, MKparams);
+    IntAsymEncrypt(zero, 0, crs, publicKey[id]);
+    genExtCipherArr(zero, zero, id, publicKey);
+
     auto one = new_MKLweSample_array(WIDTH, LWEparams, MKparams);
     IntAsymEncrypt(one, 1, crs, publicKey[id]);
     genExtCipherArr(one, one, id, publicKey);
 
     auto max_val = new_MKLweSample_array(WIDTH, LWEparams, MKparams);
-    IntAsymEncrypt(max_val, -10, crs, publicKey[id]);
+    IntAsymEncrypt(max_val, -100, crs, publicKey[id]);
     genExtCipherArr(max_val, max_val, id, publicKey);
 
-    vector<vector<vector<MKLweSample*>>> outputs(NUM_FILTERS, vector<vector<MKLweSample*>>(output_height, vector<MKLweSample*>(output_width)));
+    vector<vector<vector<MKLweSample*>>> outputs(NUM_FILTERS, vector<vector<MKLweSample*>>(output_height, vector<MKLweSample*>(output_width, zero)));
 
     for (int c = 0; c < NUM_FILTERS; c++){
         for (int i = 0; i < output_height; i++) {
@@ -592,7 +598,11 @@ vector<MKLweSample*> enc_fc_layer(vector<MKLweSample*>& input, vector<vector<MKL
     int input_size = input.size();
     int output_size = biases.size();
 
-    vector<MKLweSample*> output(output_size);
+    auto zero = new_MKLweSample_array(WIDTH, LWEparams, MKparams);
+    IntAsymEncrypt(zero, 0, crs, publicKey[id]);
+    genExtCipherArr(zero, zero, id, publicKey);
+
+    vector<MKLweSample*> output(output_size, zero);
 
     for (int i = 0; i < output_size; i++) {
         for (int j = 0; j < input_size; j++) {
