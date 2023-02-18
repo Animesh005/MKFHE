@@ -24,7 +24,7 @@
 
 using namespace std;
 
-#define Psize 16 // number of plaintext bits in packed ciphertext
+#define Psize 32 // number of plaintext bits in packed ciphertext
 #define lweDim 560
 #define num_parties 2
 
