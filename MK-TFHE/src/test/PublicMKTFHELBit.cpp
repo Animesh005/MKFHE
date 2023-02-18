@@ -22,7 +22,7 @@
 
 
 
-#define WIDTH 32
+#define WIDTH 32 // number of plaintext bits, without packing
 
 
 using namespace std;
